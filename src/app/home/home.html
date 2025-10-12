@@ -1,0 +1,101 @@
+<div class="home-container">
+  <div class="header">
+    <h1>{{ title }}</h1>
+    <p *ngIf="isLoggedIn">Bienvenido, {{ keycloakService.getFullName() }}</p>
+    <p *ngIf="!isLoggedIn">Inicia sesión para acceder a las funcionalidades</p>
+  </div>
+
+  <!-- Estado de autenticación -->
+  <div class="auth-status" *ngIf="!isLoggedIn">
+    <div class="auth-card">
+      <div class="auth-icon">🔐</div>
+      <h3>Autenticación Requerida</h3>
+      <p>Para acceder a las funcionalidades de la aplicación, necesitas iniciar sesión con Keycloak.</p>
+      <button (click)="login()" class="login-button">
+        <span class="button-icon">🔑</span>
+        Iniciar Sesión con Keycloak
+      </button>
+    </div>
+  </div>
+
+  <!-- Botones de funcionalidades -->
+  <div class="buttons-container" *ngIf="isLoggedIn">
+    <!-- Botón Tabla y Grilla (ROLE-A) -->
+    <div class="button-wrapper">
+      <button 
+        *ngIf="canAccessTableGrid()"
+        class="nav-button primary" 
+        routerLink="/table-grid"
+        routerLinkActive="active">
+        <div class="button-content">
+          <div class="button-icon">📊</div>
+          <div class="button-text">
+            <h3>Tabla y Grilla</h3>
+            <p>Visualiza datos en formato de tabla y grilla</p>
+            <span class="role-badge role-a">ROLE-A</span>
+          </div>
+        </div>
+      </button>
+      
+      <div *ngIf="!canAccessTableGrid()" class="disabled-button">
+        <div class="button-content">
+          <div class="button-icon">📊</div>
+          <div class="button-text">
+            <h3>Tabla y Grilla</h3>
+            <p>{{ getAccessMessage('ROLE-A') }}</p>
+            <span class="role-badge role-a">ROLE-A</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón Dashboard (ROLE-B) -->
+    <div class="button-wrapper">
+      <button 
+        *ngIf="canAccessDashboard()"
+        class="nav-button secondary" 
+        routerLink="/dashboard"
+        routerLinkActive="active">
+        <div class="button-content">
+          <div class="button-icon">📈</div>
+          <div class="button-text">
+            <h3>Dashboard</h3>
+            <p>Muestra el estado actual del sistema</p>
+            <span class="role-badge role-b">ROLE-B</span>
+          </div>
+        </div>
+      </button>
+      
+      <div *ngIf="!canAccessDashboard()" class="disabled-button">
+        <div class="button-content">
+          <div class="button-icon">📈</div>
+          <div class="button-text">
+            <h3>Dashboard</h3>
+            <p>{{ getAccessMessage('ROLE-B') }}</p>
+            <span class="role-badge role-b">ROLE-B</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Información de roles del usuario -->
+  <div class="user-roles" *ngIf="isLoggedIn">
+    <h4>Roles asignados:</h4>
+    <div class="roles-list">
+      <span 
+        *ngFor="let role of keycloakService.getUserRoles()" 
+        class="role-badge"
+        [class.role-a]="role === 'ROLE-A'"
+        [class.role-b]="role === 'ROLE-B'"
+        [class.other-role]="role !== 'ROLE-A' && role !== 'ROLE-B'"
+      >
+        {{ role }}
+      </span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>DACS Frontend - Sistema de Pruebas con Keycloak</p>
+  </div>
+</div>

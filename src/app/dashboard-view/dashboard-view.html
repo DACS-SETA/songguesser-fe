@@ -1,0 +1,122 @@
+<div class="dashboard-container">
+  <div class="header">
+    <div class="header-content">
+      <h1>Dashboard del Sistema</h1>
+      <button class="back-button" routerLink="/home">
+        ← Volver al Inicio
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="controls">
+      <button 
+        (click)="refreshData()" 
+        [disabled]="isLoading"
+        class="refresh-button">
+        <span *ngIf="!isLoading">🔄</span>
+        <span *ngIf="isLoading">⏳</span>
+        {{ isLoading ? 'Cargando...' : 'Actualizar Datos' }}
+      </button>
+    </div>
+
+    <div class="cards-container">
+      <!-- Card de Estado del Backend -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Estado del Backend</h2>
+          <div class="status-indicator" [class]="pingResult ? 'connected' : 'disconnected'">
+            <span *ngIf="pingResult && !pingResult.includes('Error')">🟢</span>
+            <span *ngIf="!pingResult || pingResult.includes('Error')">🔴</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="loading">
+            <div class="spinner"></div>
+            <p>Verificando conexión...</p>
+          </div>
+          <div *ngIf="!isLoading">
+            <p *ngIf="pingResult && !pingResult.includes('Error')" class="success-message">
+              <strong>Estado:</strong> {{ pingResult }}
+            </p>
+            <p *ngIf="!pingResult || pingResult.includes('Error')" class="error-message">
+              <strong>Estado:</strong> {{ pingResult || 'Sin conexión' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Datos de Prueba -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Datos de Prueba</h2>
+          <div class="status-indicator" [class]="testResult ? 'loaded' : 'loading'">
+            <span *ngIf="testResult">📊</span>
+            <span *ngIf="!testResult">⏳</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="loading">
+            <div class="spinner"></div>
+            <p>Cargando datos...</p>
+          </div>
+          <div *ngIf="!isLoading && testResult" class="data-display">
+            <div class="data-row">
+              <span class="label">ID:</span>
+              <span class="value">{{ testResult.id }}</span>
+            </div>
+            <div class="data-row">
+              <span class="label">Nombre:</span>
+              <span class="value">{{ testResult.name }}</span>
+            </div>
+            <div class="data-row">
+              <span class="label">Edad:</span>
+              <span class="value">{{ testResult.age }} años</span>
+            </div>
+            <div class="data-row">
+              <span class="label">Ciudad:</span>
+              <span class="value">{{ testResult.city }}</span>
+            </div>
+          </div>
+          <div *ngIf="!isLoading && !testResult" class="error-message">
+            No se pudieron cargar los datos de prueba
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Información del Sistema -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Información del Sistema</h2>
+          <div class="status-indicator info">
+            <span>ℹ️</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="system-info">
+            <div class="info-item">
+              <span class="label">Aplicación:</span>
+              <span class="value">DACS Frontend</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Versión:</span>
+              <span class="value">1.0.0</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Framework:</span>
+              <span class="value">Angular 20.2.0</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Backend URL:</span>
+              <span class="value">http://localhost:9001/bff</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Última actualización:</span>
+              <span class="value">{{ getCurrentTime() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

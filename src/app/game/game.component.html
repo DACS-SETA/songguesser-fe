@@ -1,0 +1,101 @@
+<div class="game-container">
+  <div *ngIf="!isGameActive" class="start-screen">
+    <h2>Nueva Partida</h2>
+    <button class="start-button" (click)="startGame()">Iniciar</button>
+  </div>
+
+  <div *ngIf="isGameActive" class="game-screen">
+    <!-- Imagen de la canción -->
+    <div class="song-artwork" *ngIf="songArtwork">
+      <img [src]="songArtwork" alt="Artwork" />
+    </div>
+
+    <!-- Reproductor -->
+    <div class="player">
+      <div class="time-bar">
+        <div class="icon-controls">
+          <button class="icon-btn" (click)="playNextSegment()" title="Play">▶️</button>
+          <button
+            class="icon-btn"
+            (click)="repeatSegment()"
+            [disabled]="currentLevel === 0"
+            title="Repetir"
+          >
+            🔁
+          </button>
+        </div>
+
+        <div class="slider-container">
+          <input
+            type="range"
+            [value]="currentTime"
+            [max]="playRanges[currentLevel - 1] || 0"
+            readonly
+          />
+        </div>
+
+        <span class="time-label">
+          {{ currentTime | number : '1.0-0' }}/{{ playRanges[currentLevel - 1] || 0 }}s
+        </span>
+      </div>
+    </div>
+
+    <!-- Pregunta -->
+    <div class="question">
+      <h3>¿Cómo se llama la canción?</h3>
+      <div class="guess-container">
+        <input
+          type="text"
+          [(ngModel)]="userGuess"
+          (input)="onSearch(userGuess)"
+          (focus)="showSuggestions = true"
+          (blur)="closeSuggestions()"
+          placeholder="Adivina el nombre de la canción..."
+          class="guess-input"
+        />
+
+        <!-- Lista de sugerencias -->
+        <ul
+          *ngIf="showSuggestions && searchResults.length > 0"
+          class="suggestions-list"
+        >
+          <li
+            *ngFor="let song of searchResults"
+            (click)="selectSuggestion(song)"
+            class="suggestion-item"
+          >
+            <img
+              [src]="song.artworkUrl100"
+              alt="art"
+              width="40"
+              height="40"
+              class="suggestion-img"
+            />
+            <div class="suggestion-info">
+              <span class="song-name">{{ song.trackName }}</span>
+              <small class="artist-name">{{ song.artistName }}</small>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="actions">
+      <button class="submit" (click)="submitGuess()">Enviar</button>
+      <button class="giveup" (click)="revealAnswer()">Rendirse</button>
+      <button
+        class="next"
+        *ngIf="showNextButton"
+        (click)="nextGame()"
+        title="Siguiente canción"
+      >
+        ⏭️
+      </button>
+    </div>
+
+    <p class="result" [class.correct]="isCorrect" [class.wrong]="!isCorrect">
+      {{ resultMessage }}
+    </p>
+  </div>
+</div>
