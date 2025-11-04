@@ -122,7 +122,9 @@ export class BaseApiService {
     }
     
     // Construir URL normal
-    return `${this.baseUrl}/${endpoint}`.replace(/\/+/g, '/');
+    // Reemplazar múltiples '/' salvo la parte del protocolo ('http://')
+    // Usar una regex que no colapse las '//' del esquema URL
+    return `${this.baseUrl}/${endpoint}`.replace(/([^:]\/)\/+/g, '$1');
   }
 
   /**

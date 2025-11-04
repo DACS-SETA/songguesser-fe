@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, debounceTime, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { BaseApiService } from './base-api.service';
+import { SongSearchResult, ItunesSearchResponse } from '../models/song-search-result.model';
 
 export interface Song {
   trackId: number;
@@ -12,24 +15,20 @@ export interface Song {
 }
 
 @Injectable({ providedIn: 'root' })
-export class SongService {
-  private apiUrl = 'http://localhost:9001/bff/itunes';
+export class SongService extends BaseApiService {
+  // Ya no necesitamos constructor ni apiUrl, se heredan desde BaseApiService
 
-  constructor(private http: HttpClient) {}
-
-  getRandomSong(): Observable<Song> {
-    return this.http.get<Song>(`${this.apiUrl}/random`);
-  }
-
-   searchSongs(query: string): Observable<any[]> {
+  searchSongs(query: string): Observable<SongSearchResult[]> {
     if (!query.trim()) {
       return of([]);
     }
-    return this.http
-      .get<any[]>(`${this.apiUrl}/search?term=${encodeURIComponent(query)}`)
+
+    // Usamos this.get() del BaseApiService y esperamos el objeto completo ItunesSearchResponse
+    return this.get<ItunesSearchResponse>(`itunes/search?term=${encodeURIComponent(query)}`)
       .pipe(
-        debounceTime(300),
-        catchError(() => of([]))
+        // Extraemos solo el array 'results' del objeto
+        map(response => response?.results || []),
+        catchError(() => of([])) // Devuelve un array vacío si hay error
       );
   }
 }

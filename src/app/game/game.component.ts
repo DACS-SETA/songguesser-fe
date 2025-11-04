@@ -1,7 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { GameManagementService } from '../core/services/game-management.service';
+import { RoundState, GameSummary } from '../core/models/game.model';
+import { SongSearchResult } from '../core/models/song-search-result.model';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
 import { SongService } from '../core/services/song.service';
 
@@ -16,6 +18,8 @@ export class GameComponent implements OnDestroy {
   isGameActive = false;
   songUrl: string | null = null;
   songTitle: string | null = null;
+  currentGameId: string | null = null;
+  currentRound: number = 0;
   userGuess = '';
   resultMessage = '';
   isCorrect = false;
@@ -32,29 +36,33 @@ export class GameComponent implements OnDestroy {
   isPlaying = false;
 
   // Songs suggest input
-  searchResults: any[] = [];
+  searchResults: SongSearchResult[] = [];
   private searchTerms = new Subject<string>();
   showSuggestions = false;
     private destroy$ = new Subject<void>();
 
 
-  constructor(private http: HttpClient, private songService: SongService) {}
+  constructor(private songService: SongService, private gameManagementService: GameManagementService) {}
 
   startGame(): void {
     this.resetGame();
     this.isGameActive = true;
-
-    this.http.get<any>('http://localhost:9001/bff/itunes/random').subscribe({
-      next: (res) => {
-        this.songUrl = res.previewUrl;
-        this.songTitle = res.trackName.toLowerCase().trim();
-        this.songArtwork = res.artworkUrl100; 
+    this.gameManagementService.startGame().subscribe({
+      next: (response: RoundState) => {
+        this.currentGameId = response.gameId;
+  this.songUrl = response.song.previewUrl;
+  this.songTitle = response.song.trackName.trim();
+        this.songArtwork = response.song.artworkUrl100;
 
         this.initAudio();
+        // El backend no devuelve 'round' en ocasiones, lo seteamos manualmente por ahora
+        this.currentRound = response.round || 1;
+        this.resultMessage = `Ronda ${this.currentRound} iniciada.`;
       },
       error: (err) => {
-        console.error('Error fetching song', err);
-        this.resultMessage = 'Error al obtener la canción.';
+        console.error('Error al iniciar el juego:', err);
+        this.resultMessage = 'Error al iniciar el juego.';
+        this.isGameActive = false;
       }
     });
   }
@@ -114,24 +122,47 @@ export class GameComponent implements OnDestroy {
   }
 
   submitGuess(): void {
-    if (!this.userGuess.trim()) return;
+    if (!this.userGuess.trim() || !this.currentGameId) return;
 
-    if (this.userGuess.toLowerCase().trim() === this.songTitle) {
-      this.isCorrect = true;
-      this.resultMessage = '🎉 ¡Correcto! Era "' + this.songTitle + '"';
-      this.audio.pause();
-      this.showNextButton = true;
-    } else {
-      this.isCorrect = false;
-      this.resultMessage = '❌ Incorrecto. Intenta nuevamente.';
-    }
+    console.log('Enviando al backend:', this.userGuess.trim());
+    console.log('Respuesta correcta (guardada):', this.songTitle);
+
+    this.gameManagementService.submitGuess(this.currentGameId, this.userGuess.trim()).subscribe({
+      next: (response: RoundState) => {
+        if (response.isCorrect) {
+          this.isCorrect = true;
+          this.resultMessage = '🎉 ¡Correcto! Era "' + this.songTitle + '"';
+          this.audio.pause();
+          this.showNextButton = true; // (RF10)
+        } else {
+          this.isCorrect = false;
+          this.resultMessage = '❌ Incorrecto. Intenta nuevamente.';
+        }
+      },
+      error: (err) => {
+        console.error('Error al enviar respuesta:', err);
+        this.resultMessage = 'Error al procesar la respuesta.';
+      }
+    });
   }
 
-  revealAnswer(): void {
-    this.isRevealed = true;
-    this.resultMessage = `La canción era: "${this.songTitle}"`;
-    this.audio.pause();
-    this.showNextButton = true;
+  surrenderGame(): void {
+    if (!this.currentGameId) return;
+    this.gameManagementService.surrender(this.currentGameId).subscribe({
+      next: (response: GameSummary) => {
+        // (RF11, RF14)
+        this.isRevealed = true;
+        this.resultMessage = `Te rendiste. La canción era: "${this.songTitle}". Partida finalizada.`;
+        this.audio.pause();
+        this.showNextButton = false;
+        // Aquí deberíamos mostrar el modal de resumen de partida (GameSummaryModalComponent)
+        console.log('Resumen de partida:', response);
+      },
+      error: (err) => {
+        console.error('Error al rendirse:', err);
+        this.resultMessage = 'Error al intentar rendirse.';
+      }
+    });
   }
 
   nextGame(): void {
@@ -181,9 +212,10 @@ export class GameComponent implements OnDestroy {
     this.searchTerms.next(term);
   }
 
-  selectSuggestion(song: any): void {
-    this.userGuess = song.trackName;
+  selectSuggestion(song: SongSearchResult): void {
+    this.userGuess = song.trackName.trim();
     this.showSuggestions = false;
+    // Opcional: enfocar el input de nuevo si es necesario
   }
 
   closeSuggestions(): void {
