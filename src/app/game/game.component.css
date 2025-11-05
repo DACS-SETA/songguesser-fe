@@ -287,3 +287,49 @@
 .modal-footer .btn-secondary:hover {
   background: #bbb;
 }
+
+/* Estilos para el Modal de Resumen de RONDA */
+.modal-content.round-summary {
+  max-width: 550px;
+  text-align: left;
+}
+
+.round-summary-body {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.round-summary-art {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.round-summary-art img {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.summary-score-round {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #28a745;
+  margin-top: 0.5rem;
+}
+
+.round-summary-info {
+  flex-grow: 1;
+}
+
+.round-summary-info h3 {
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.round-summary-info p {
+  font-size: 1.1rem;
+  color: #555;
+  margin: 0;
+}

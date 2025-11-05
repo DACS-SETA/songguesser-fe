@@ -111,3 +111,35 @@
     </div>
   </div>
 </div>
+<div class="modal-overlay" *ngIf="showRoundSummaryModal && lastRoundInfo">
+  <div class="modal-content round-summary">
+    <div class="modal-header">
+      <h2>¡Ronda Superada!</h2>
+    </div>
+
+    <div class="modal-body round-summary-body">
+      <div class="round-summary-art">
+        <img
+          [src]="lastRoundInfo.song.artworkUrl100"
+          alt="Artwork"
+        />
+        <p class="summary-score-round">
+          +{{ lastRoundInfo.score }} Puntos
+        </p>
+      </div>
+
+      <div class="round-summary-info">
+        <h3>{{ lastRoundInfo.song.trackName }}</h3>
+        <p>de {{ lastRoundInfo.song.artistName }}</p>
+        
+        </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="nextRound()">Siguiente Ronda</button>
+      <button class="btn-secondary" (click)="surrenderGame()">
+        Terminar Partida
+      </button>
+    </div>
+  </div>
+</div>

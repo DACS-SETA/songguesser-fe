@@ -29,6 +29,8 @@ export class GameComponent implements OnDestroy {
   songArtwork: string | null = null;
   showSummaryModal = false;
   gameSummary: GameSummary | null = null;
+  showRoundSummaryModal = false;
+  lastRoundInfo: RoundState | null = null;
 
 
   audio!: HTMLAudioElement;
@@ -152,7 +154,8 @@ export class GameComponent implements OnDestroy {
           clearTimeout(this.roundTimer);
           this.resultMessage = '🎉 ¡Correcto! Era "' + this.songTitle + '"';
           this.audio.pause();
-          this.showNextButton = true; // (RF10)
+          this.lastRoundInfo = response;
+          this.showRoundSummaryModal = true;
         } else {
           this.isCorrect = false;
           this.resultMessage = '❌ Incorrecto. Intenta nuevamente.';
@@ -166,6 +169,8 @@ export class GameComponent implements OnDestroy {
   }
 
   surrenderGame(): void {
+    this.showRoundSummaryModal = false;
+    this.lastRoundInfo = null;
     if (!this.currentGameId) return;
     this.gameManagementService.surrender(this.currentGameId).subscribe({
       next: (response: GameSummary) => {
@@ -184,6 +189,8 @@ export class GameComponent implements OnDestroy {
   }
 
   nextRound(): void {
+    this.showRoundSummaryModal = false;
+    this.lastRoundInfo = null;
     // Prepare local state for the next round
     this.showNextButton = false;
     this.resetRound();

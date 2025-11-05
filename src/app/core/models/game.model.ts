@@ -4,6 +4,7 @@ export interface GameSong {
   trackName: string;
   artworkUrl100: string;
   previewUrl: string;
+  artistName: string; // <-- Agregá esta línea
 }
 
 // Respuesta al iniciar o enviar una ronda
