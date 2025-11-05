@@ -14,28 +14,20 @@
     <div class="player">
       <div class="time-bar">
         <div class="icon-controls">
-          <button class="icon-btn" (click)="playNextSegment()" title="Play">▶️</button>
-          <button
-            class="icon-btn"
-            (click)="repeatSegment()"
-            [disabled]="currentLevel === 0"
-            title="Repetir"
-          >
-            🔁
-          </button>
+          <button class="icon-btn" (click)="playRound()" [disabled]="hasPlayedThisRound" title="Play">▶️</button>
         </div>
 
         <div class="slider-container">
           <input
             type="range"
             [value]="currentTime"
-            [max]="playRanges[currentLevel - 1] || 0"
+            [max]="MAX_TIME"
             readonly
           />
         </div>
 
         <span class="time-label">
-          {{ currentTime | number : '1.0-0' }}/{{ playRanges[currentLevel - 1] || 0 }}s
+          {{ currentTime | number : '1.0-0' }}/{{ MAX_TIME }}s
         </span>
       </div>
     </div>
@@ -82,12 +74,12 @@
 
     <!-- Botones -->
     <div class="actions">
-      <button class="submit" (click)="submitGuess()">Enviar</button>
-  <button class="giveup" (click)="surrenderGame()">Rendirse</button>
+      <button class="submit" (click)="submitGuess()" [disabled]="isRevealed">Enviar</button>
+  <button class="giveup" (click)="surrenderGame()" [disabled]="isRevealed || isCorrect">Rendirse</button>
       <button
         class="next"
-        *ngIf="showNextButton"
-        (click)="nextGame()"
+        *ngIf="showNextButton && !isRevealed"
+        (click)="nextRound()"
         title="Siguiente canción"
       >
         ⏭️
@@ -97,5 +89,25 @@
     <p class="result" [class.correct]="isCorrect" [class.wrong]="!isCorrect">
       {{ resultMessage }}
     </p>
+  </div>
+</div>
+<div class="modal-overlay" *ngIf="showSummaryModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Partida Finalizada</h2>
+    </div>
+    <div class="modal-body" *ngIf="gameSummary">
+      <p class="summary-score">{{ gameSummary.totalScore }} Puntos</p>
+      <p class="summary-details">
+        {{ gameSummary.correctRounds }} de {{ gameSummary.totalRounds }} canciones
+        acertadas
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="restartGame()">
+        Iniciar Nueva Partida
+      </button>
+      <button class="btn-secondary" (click)="goToHome()">Volver al Inicio</button>
+    </div>
   </div>
 </div>

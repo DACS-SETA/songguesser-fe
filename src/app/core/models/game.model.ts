@@ -20,5 +20,7 @@ export interface RoundState {
 export interface GameSummary {
   gameId: string;
   totalScore: number;
-  songsGuessed: number;
+  totalRounds: number;
+  correctRounds: number;
+  // 'rounds' es opcional ya que no lo usaremos en el modal
 }

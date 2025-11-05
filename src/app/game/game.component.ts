@@ -6,6 +6,7 @@ import { RoundState, GameSummary } from '../core/models/game.model';
 import { SongSearchResult } from '../core/models/song-search-result.model';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
 import { SongService } from '../core/services/song.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -26,12 +27,16 @@ export class GameComponent implements OnDestroy {
   isRevealed = false;
   showNextButton = false;
   songArtwork: string | null = null;
+  showSummaryModal = false;
+  gameSummary: GameSummary | null = null;
 
 
   audio!: HTMLAudioElement;
   currentTime = 0;
-  currentLevel = 0;
-  playRanges = [5, 15, 30];
+  // Max playback time per round (seconds)
+  readonly MAX_TIME = 30;
+  hasPlayedThisRound = false;
+  roundTimer: any;
   intervalId: any;
   isPlaying = false;
 
@@ -42,7 +47,7 @@ export class GameComponent implements OnDestroy {
     private destroy$ = new Subject<void>();
 
 
-  constructor(private songService: SongService, private gameManagementService: GameManagementService) {}
+  constructor(private songService: SongService, private gameManagementService: GameManagementService, private router: Router) {}
 
   startGame(): void {
     this.resetGame();
@@ -67,6 +72,14 @@ export class GameComponent implements OnDestroy {
     });
   }
 
+  private showSummary(summary: GameSummary): void {
+    this.gameSummary = summary;
+    this.showSummaryModal = true;
+    this.isGameActive = false;
+    this.isRevealed = true; // Asegura que los controles queden deshabilitados
+    this.resultMessage = `Partida finalizada. Puntaje: ${summary.totalScore}`;
+  }
+
   initAudio(): void {
     if (this.songUrl) {
       this.audio = new Audio(this.songUrl);
@@ -78,23 +91,28 @@ export class GameComponent implements OnDestroy {
     }
   }
 
-  playNextSegment(): void {
-    if (!this.audio) return;
-    if (this.currentLevel >= this.playRanges.length) {
-      this.resultMessage = '🎵 Ya escuchaste el fragmento completo (30s)';
-      return;
-    }
+  playRound(): void {
+    if (!this.audio || this.hasPlayedThisRound) return;
 
+    this.hasPlayedThisRound = true;
     this.isPlaying = true;
     this.audio.currentTime = 0;
     this.audio.play();
 
-    const endTime = this.playRanges[this.currentLevel];
-    this.currentLevel++;
+    // Limpia cualquier temporizador anterior
+    clearTimeout(this.roundTimer);
 
-    clearInterval(this.intervalId);
+    // Inicia el temporizador de 30 segundos para "Game Over"
+    this.roundTimer = setTimeout(() => {
+      // Solo finaliza el juego si para este punto NO han acertado
+      if (!this.isCorrect) {
+        this.gameOver();
+      }
+    }, this.MAX_TIME * 1000);
+
+    // Inicia el intervalo para actualizar la UI (esto es opcional pero recomendado)
     this.intervalId = setInterval(() => {
-      if (this.audio.currentTime >= endTime) {
+      if (this.audio.currentTime >= this.MAX_TIME) {
         this.audio.pause();
         this.audio.currentTime = 0;
         this.isPlaying = false;
@@ -102,35 +120,36 @@ export class GameComponent implements OnDestroy {
       }
     }, 200);
   }
-
-  repeatSegment(): void {
-    if (!this.audio || this.currentLevel === 0) return;
-    const endTime = this.playRanges[this.currentLevel - 1];
-    this.isPlaying = true;
-    this.audio.currentTime = 0;
-    this.audio.play();
-
-    clearInterval(this.intervalId);
-    this.intervalId = setInterval(() => {
-      if (this.audio.currentTime >= endTime) {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        this.isPlaying = false;
-        clearInterval(this.intervalId);
-      }
-    }, 200);
+  private gameOver(): void {
+    this.audio.pause();
+    this.isPlaying = false;
+    this.isRevealed = true;
+    this.showNextButton = false;
+    this.resultMessage = `¡Se acabó el tiempo! La canción era: "${this.songTitle}". Partida finalizada.`;
+    // Obtener el resumen de la partida y mostrar el modal
+    if (this.currentGameId) {
+      this.gameManagementService.getGameSummary(this.currentGameId).subscribe({
+        next: (summary: GameSummary) => this.showSummary(summary),
+        error: (err) => {
+          console.error('Error al obtener resumen tras gameOver:', err);
+          // mantener el mensaje de tiempo acabado si falla
+        }
+      });
+    }
   }
 
   submitGuess(): void {
+    if (this.isRevealed) return;
     if (!this.userGuess.trim() || !this.currentGameId) return;
 
     console.log('Enviando al backend:', this.userGuess.trim());
     console.log('Respuesta correcta (guardada):', this.songTitle);
 
-    this.gameManagementService.submitGuess(this.currentGameId, this.userGuess.trim()).subscribe({
+  this.gameManagementService.submitGuess(this.currentGameId, this.userGuess.trim(), Math.round(this.currentTime)).subscribe({
       next: (response: RoundState) => {
         if (response.isCorrect) {
           this.isCorrect = true;
+          clearTimeout(this.roundTimer);
           this.resultMessage = '🎉 ¡Correcto! Era "' + this.songTitle + '"';
           this.audio.pause();
           this.showNextButton = true; // (RF10)
@@ -151,12 +170,11 @@ export class GameComponent implements OnDestroy {
     this.gameManagementService.surrender(this.currentGameId).subscribe({
       next: (response: GameSummary) => {
         // (RF11, RF14)
-        this.isRevealed = true;
-        this.resultMessage = `Te rendiste. La canción era: "${this.songTitle}". Partida finalizada.`;
+        clearTimeout(this.roundTimer);
         this.audio.pause();
         this.showNextButton = false;
-        // Aquí deberíamos mostrar el modal de resumen de partida (GameSummaryModalComponent)
-        console.log('Resumen de partida:', response);
+        // Mostrar resumen de la partida en modal
+        this.showSummary(response);
       },
       error: (err) => {
         console.error('Error al rendirse:', err);
@@ -165,28 +183,79 @@ export class GameComponent implements OnDestroy {
     });
   }
 
-  nextGame(): void {
+  nextRound(): void {
+    // Prepare local state for the next round
     this.showNextButton = false;
-    this.startGame();
+    this.resetRound();
+
+    // Call backend to advance to next round
+    if (!this.currentGameId) {
+      this.resultMessage = 'No hay una partida activa.';
+      return;
+    }
+
+    this.gameManagementService.nextRound(this.currentGameId!).subscribe({
+      next: (response: RoundState) => {
+        // Update UI/state with the new round data
+        this.songUrl = response.song.previewUrl;
+        this.songTitle = response.song.trackName.trim();
+        this.songArtwork = response.song.artworkUrl100;
+        this.currentRound = response.round || this.currentRound + 1;
+        this.resultMessage = `Ronda ${this.currentRound} iniciada.`;
+
+        // Initialize audio for the new round
+        this.initAudio();
+      },
+      error: (err) => {
+        console.error('Error al avanzar a la siguiente ronda:', err);
+        this.resultMessage = 'Error al avanzar de ronda.';
+      }
+    });
   }
 
-  resetGame(): void {
+  // Reset only the round-specific state
+  private resetRound(): void {
     this.userGuess = '';
     this.resultMessage = '';
     this.isCorrect = false;
     this.isRevealed = false;
     this.songUrl = null;
     this.songTitle = null;
-    this.currentLevel = 0;
     this.currentTime = 0;
     this.showNextButton = false;
+    clearTimeout(this.roundTimer);
     clearInterval(this.intervalId);
+    this.hasPlayedThisRound = false;
     if (this.audio) this.audio.pause();
     this.isPlaying = false;
   }
 
+  resetGame(): void {
+    // Reset round-specific fields
+    this.resetRound();
+
+    // Reset game-level fields
+    this.isGameActive = false;
+    this.currentGameId = null;
+  }
+
+  restartGame(): void {
+    this.showSummaryModal = false;
+    this.gameSummary = null;
+    this.resetGame();
+    this.startGame();
+  }
+
+  goToHome(): void {
+    this.showSummaryModal = false;
+    this.gameSummary = null;
+    this.resetGame();
+    this.router.navigate(["/home"]);
+  }
+
    ngOnDestroy(): void {
     if (this.audio) this.audio.pause();
+    clearTimeout(this.roundTimer);
     clearInterval(this.intervalId);
     this.destroy$.next();
     this.destroy$.complete();

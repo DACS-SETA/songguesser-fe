@@ -213,3 +213,77 @@
 .result.wrong {
   color: #dc3545;
 }
+
+/* Estilos para el Modal de Resumen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: #f8f8f8;
+  color: #222;
+  padding: 1.5rem 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-header h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.modal-body .summary-score {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #0078d7;
+  margin: 0.5rem 0;
+}
+
+.modal-body .summary-details {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.modal-footer button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-footer .btn-primary {
+  background: #222;
+  color: #fff;
+}
+.modal-footer .btn-primary:hover {
+  background: #333;
+}
+
+.modal-footer .btn-secondary {
+  background: #ccc;
+  color: #000;
+}
+.modal-footer .btn-secondary:hover {
+  background: #bbb;
+}

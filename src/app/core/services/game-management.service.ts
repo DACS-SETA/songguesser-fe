@@ -28,9 +28,15 @@ export class GameManagementService extends BaseApiService {
   }
 
   // Submit a guess for the current round
-  // POST bff/games/{gameId}/round  { guess }
-  submitGuess(gameId: string, guess: string): Observable<RoundState> {
-    return this.post<RoundState>(`games/${encodeURIComponent(gameId)}/round`, { guess });
+  // POST bff/games/{gameId}/round  { guess, time }
+  submitGuess(gameId: string, guess: string, time: number): Observable<RoundState> {
+    return this.post<RoundState>(`games/${encodeURIComponent(gameId)}/round`, { guess, time });
+  }
+
+  // Advance to the next round
+  // POST bff/games/{gameId}/round with null body
+  nextRound(gameId: string): Observable<RoundState> {
+    return this.post<RoundState>(`games/${encodeURIComponent(gameId)}/round`, null);
   }
 
   // Surrender a game
