@@ -1,145 +1,193 @@
 <div class="game-container">
-  <div *ngIf="!isGameActive" class="start-screen">
-    <h2>Nueva Partida</h2>
-    <button class="start-button" (click)="startGame()">Iniciar</button>
+  <!-- Navegación superior (igual al home) -->
+  <nav class="top-nav" *ngIf="isGameActive">
+    <div class="nav-logo">
+      SongGuesser
+    </div>
+    <div class="nav-links">
+      <a routerLink="/home" class="nav-link">Jugar</a>
+      <a href="#" class="nav-link">Ranking</a>
+      <a href="#" class="nav-link">Perfil</a>
+      <a href="#" class="nav-link">Ayuda</a>
+    </div>
+    <button (click)="goToHome()" class="logout-button">Cerrar Sesión</button>
+  </nav>
+
+  <!-- Cuenta regresiva -->
+  <div *ngIf="showCountdown" class="countdown-screen">
+    <div class="countdown-number">{{ countdownValue }}</div>
   </div>
 
-  <div *ngIf="isGameActive" class="game-screen">
-    <!-- Imagen de la canción -->
-    <div class="song-artwork" *ngIf="songArtwork">
-      <img [src]="songArtwork" alt="Artwork" />
-    </div>
+  <!-- Pantalla de juego -->
+  <div *ngIf="isGameActive && !showCountdown" class="game-screen">
+    <div class="game-content">
+      <!-- Título de la ronda -->
+      <h1 class="round-title">Ronda {{ currentRound }}</h1>
 
-    <!-- Reproductor -->
-    <div class="player">
-      <div class="time-bar">
-        <div class="icon-controls">
-          <button class="icon-btn" (click)="playRound()" [disabled]="hasPlayedThisRound" title="Play">▶️</button>
+      <!-- Card de juego -->
+      <div class="game-card">
+        <!-- Reproductor -->
+        <div class="player-section">
+          <div class="time-display">
+            <span class="time-label">{{ formatTime(currentTime) }}</span>
+            <span class="time-label">{{ formatTime(MAX_TIME) }}</span>
+          </div>
+            <div class="progress-bar" [class.warning]="(MAX_TIME - currentTime) <= 5">
+              <div class="progress-fill" [class.warning]="(MAX_TIME - currentTime) <= 5" [style.width.%]="(currentTime / MAX_TIME) * 100"></div>
+          </div>
         </div>
 
-        <div class="slider-container">
-          <input
-            type="range"
-            [value]="currentTime"
-            [max]="MAX_TIME"
-            readonly
-          />
-        </div>
-
-        <span class="time-label">
-          {{ currentTime | number : '1.0-0' }}/{{ MAX_TIME }}s
-        </span>
-      </div>
-    </div>
-
-    <!-- Pregunta -->
-    <div class="question">
-      <h3>¿Cómo se llama la canción?</h3>
-      <div class="guess-container">
-        <input
-          type="text"
-          [(ngModel)]="userGuess"
-          (input)="onSearch(userGuess)"
-          (focus)="showSuggestions = true"
-          (blur)="closeSuggestions()"
-          placeholder="Adivina el nombre de la canción..."
-          class="guess-input"
-        />
-
-        <!-- Lista de sugerencias -->
-        <ul
-          *ngIf="showSuggestions && searchResults.length > 0"
-          class="suggestions-list"
-        >
-          <li
-            *ngFor="let song of searchResults"
-            (click)="selectSuggestion(song)"
-            class="suggestion-item"
-          >
-            <img
-              [src]="song.artworkUrl100"
-              alt="art"
-              width="40"
-              height="40"
-              class="suggestion-img"
+        <!-- Pregunta -->
+        <div class="question-section">
+          <h3>¿Cómo se llama la canción?</h3>
+          <div class="guess-container">
+            <input
+              type="text"
+              [(ngModel)]="userGuess"
+              (input)="onSearch(userGuess)"
+              (focus)="showSuggestions = true"
+              (blur)="closeSuggestions()"
+              placeholder="Ingrese el título de la canción"
+              class="guess-input"
             />
-            <div class="suggestion-info">
-              <span class="song-name">{{ song.trackName }}</span>
-              <small class="artist-name">{{ song.artistName }}</small>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
 
-    <!-- Botones -->
-    <div class="actions">
-      <button class="submit" (click)="submitGuess()" [disabled]="isRevealed">Enviar</button>
-  <button class="giveup" (click)="surrenderGame()" [disabled]="isRevealed || isCorrect">Rendirse</button>
-      <button
-        class="next"
-        *ngIf="showNextButton && !isRevealed"
-        (click)="nextRound()"
-        title="Siguiente canción"
-      >
-        ⏭️
-      </button>
-    </div>
+            <!-- Lista de sugerencias -->
+            <ul
+              *ngIf="showSuggestions && searchResults.length > 0"
+              class="suggestions-list"
+            >
+              <li
+                *ngFor="let song of searchResults"
+                (mousedown)="selectSuggestion(song)"
+                class="suggestion-item"
+              >
+                <img
+                  [src]="song.artworkUrl100"
+                  alt="art"
+                  width="40"
+                  height="40"
+                  class="suggestion-img"
+                />
+                <div class="suggestion-info">
+                  <span class="song-name">{{ song.trackName }}</span>
+                  <small class="artist-name">{{ song.artistName }}</small>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-    <p class="result" [class.correct]="isCorrect" [class.wrong]="!isCorrect">
-      {{ resultMessage }}
-    </p>
-  </div>
-</div>
-<div class="modal-overlay" *ngIf="showSummaryModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Partida Finalizada</h2>
-    </div>
-    <div class="modal-body" *ngIf="gameSummary">
-      <p class="summary-score">{{ gameSummary.totalScore }} Puntos</p>
-      <p class="summary-details">
-        {{ gameSummary.correctRounds }} de {{ gameSummary.totalRounds }} canciones
-        acertadas
-      </p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-primary" (click)="restartGame()">
-        Iniciar Nueva Partida
-      </button>
-      <button class="btn-secondary" (click)="goToHome()">Volver al Inicio</button>
-    </div>
-  </div>
-</div>
-<div class="modal-overlay" *ngIf="showRoundSummaryModal && lastRoundInfo">
-  <div class="modal-content round-summary">
-    <div class="modal-header">
-      <h2>¡Ronda Superada!</h2>
-    </div>
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <button 
+            class="btn-submit" 
+            (click)="submitGuess()" 
+            [disabled]="isRevealed || !userGuess.trim()">
+            Enviar Respuesta
+          </button>
+          <button 
+            class="btn-surrender" 
+            (click)="surrenderGame()" 
+            [disabled]="isRevealed || isCorrect">
+            Rendirse
+          </button>
+        </div>
 
-    <div class="modal-body round-summary-body">
-      <div class="round-summary-art">
-        <img
-          [src]="lastRoundInfo.song.artworkUrl100"
-          alt="Artwork"
-        />
-        <p class="summary-score-round">
-          +{{ lastRoundInfo.score }} Puntos
+        <!-- Mensaje de resultado -->
+        <p class="result-message" *ngIf="resultMessage" [class.correct]="isCorrect" [class.wrong]="!isCorrect && resultMessage.includes('Incorrecto')">
+          {{ resultMessage }}
         </p>
       </div>
-
-      <div class="round-summary-info">
-        <h3>{{ lastRoundInfo.song.trackName }}</h3>
-        <p>de {{ lastRoundInfo.song.artistName }}</p>
-        
-        </div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn-primary" (click)="nextRound()">Siguiente Ronda</button>
-      <button class="btn-secondary" (click)="surrenderGame()">
-        Terminar Partida
-      </button>
     </div>
   </div>
+
+    <!-- Modal unificado de resultado de ronda -->
+    <div class="modal-overlay" *ngIf="showOutcomeModal">
+      <div class="modal-content round-summary" [class.failure]="outcomeType !== 'success'">
+        <div class="modal-header">
+          <h2>{{ outcomeType === 'success' ? '¡Respuesta Correcta!' : 'No adivinaste la canción' }}</h2>
+        </div>
+
+        <div class="modal-body round-summary-body">
+          <div class="song-info-container">
+            <ng-container *ngIf="outcomeType === 'success' && lastRoundInfo as info; else failureSong">
+              <div class="song-artwork-modal">
+                <img [src]="info.song.artworkUrl100" alt="Artwork" />
+              </div>
+              <div class="song-metadata">
+                <p class="artist-name">{{ info.song.artistName }}</p>
+                <h3 class="track-name">{{ info.song.trackName }}</h3>
+              </div>
+            </ng-container>
+            <ng-template #failureSong>
+              <div class="song-artwork-modal">
+                <img [src]="songArtwork || ''" alt="Artwork" />
+              </div>
+              <div class="song-metadata">
+                <p class="artist-name">{{ songArtist || '' }}</p>
+                <h3 class="track-name">{{ songTitle || '' }}</h3>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="stats-container">
+            <div class="stat-box" *ngIf="outcomeType === 'success'; else failureStatsLeft">
+              <span class="stat-label">Tardaste</span>
+              <span class="stat-value">{{ Math.floor(currentTime) }} segundos</span>
+            </div>
+            <ng-template #failureStatsLeft>
+              <div class="stat-box">
+                <span class="stat-label">Motivo</span>
+                <span class="stat-value">{{ outcomeType === 'surrender' ? 'Te rendiste' : 'Tiempo agotado' }}</span>
+              </div>
+            </ng-template>
+
+            <div class="stat-box highlight" *ngIf="outcomeType === 'success'; else failurePoints">
+              <span class="stat-label">Puntos</span>
+              <span class="stat-value">+{{ lastRoundInfo?.score }}</span>
+            </div>
+            <ng-template #failurePoints>
+              <div class="stat-box highlight">
+                <span class="stat-label">Puntos</span>
+                <span class="stat-value">+0</span>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="modal-footer-actions" *ngIf="outcomeType === 'success'; else failureFooter">
+          <button class="btn-modal-secondary" (click)="finalizeGame()">Terminar Partida</button>
+          <button class="btn-modal-primary" (click)="nextRound()">Siguiente Ronda</button>
+        </div>
+        <ng-template #failureFooter>
+          <div class="modal-footer-actions single">
+            <button class="btn-modal-primary" (click)="finalizeGame()">Terminar Partida</button>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+  <!-- Modales (sin cambios) -->
+  <div class="modal-overlay" *ngIf="showSummaryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Partida Finalizada</h2>
+      </div>
+      <div class="modal-body" *ngIf="gameSummary">
+        <p class="summary-score">{{ gameSummary.totalScore }} Puntos</p>
+        <p class="summary-details">
+          {{ gameSummary.correctRounds }} de {{ gameSummary.totalRounds }} canciones
+          acertadas
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" (click)="restartGame()">
+          Iniciar Nueva Partida
+        </button>
+        <button class="btn-secondary" (click)="goToHome()">Volver al Inicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de respuesta correcta removido: reemplazado por modal unificado -->
 </div>

@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     keycloak: {
-        url:  'http://localhost:8080' ,
+        url:  'http://localhost:8090' ,
         realm: 'dacs',
         clientId: 'dacs-fe'
     },
