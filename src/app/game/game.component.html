@@ -26,6 +26,10 @@
 
       <!-- Card de juego -->
       <div class="game-card">
+        <!-- Portada -->
+        <div class="song-artwork-container" *ngIf="songArtwork">
+          <img [src]="songArtwork" alt="Portada del álbum" class="song-artwork-img" />
+        </div>
         <!-- Reproductor -->
         <div class="player-section">
           <div class="time-display">

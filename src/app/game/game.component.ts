@@ -110,7 +110,6 @@ export class GameComponent implements OnInit, OnDestroy {
         this.initAudio();
         // El backend no devuelve 'round' en ocasiones, lo seteamos manualmente por ahora
         this.currentRound = response.round || 1;
-        this.resultMessage = `Ronda ${this.currentRound} iniciada.`;
         
         // Reproducir automáticamente al iniciar
         setTimeout(() => {
@@ -274,7 +273,6 @@ export class GameComponent implements OnInit, OnDestroy {
   this.songArtwork = response.song.artworkUrl100;
   this.songArtist = response.song.artistName;
         this.currentRound = response.round || this.currentRound + 1;
-        this.resultMessage = `Ronda ${this.currentRound} iniciada.`;
 
         // Initialize audio for the new round
         this.initAudio();
@@ -323,7 +321,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.showOutcomeModal = false;
     this.outcomeType = null;
     this.resetGame();
-    this.startGame();
+    this.startCountdown(); // <-- Esta es la solución
   }
 
   goToHome(): void {

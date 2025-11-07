@@ -195,14 +195,14 @@
 .game-card {
   background: var(--white);
   border-radius: 16px;
-  padding: 2.5rem;
+  padding: 1.75rem;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Player Section */
 .player-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .time-display {
@@ -243,7 +243,7 @@
 
 /* Question Section */
 .question-section {
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .question-section h3 {
@@ -845,5 +845,26 @@
 
   .modal-footer-actions {
     padding: 1.25rem 1.5rem;
+  }
+}
+
+/* Portada del Álbum */
+.song-artwork-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.song-artwork-img {
+  width: 150px;
+  height: 150px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajuste para mobile */
+@media (max-width: 480px) {
+  .song-artwork-img {
+    width: 120px;
+    height: 120px;
   }
 }
