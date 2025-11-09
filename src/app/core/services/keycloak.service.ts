@@ -141,4 +141,26 @@ export class KeycloakService {
       }
     }
   }
+
+getKeycloakId(): string | null {
+  const instance = this.keycloak.getKeycloakInstance();
+  const parsed = instance.tokenParsed as any;
+  return parsed?.sub || null;
+}
+
+
+getUserIdentity(): any {
+  const profile = this.getUserProfile();
+  const instance = this.keycloak.getKeycloakInstance();
+  const parsed = instance.tokenParsed as any;
+
+  return {
+    keycloakId: parsed?.sub,
+    username: profile?.username,
+    email: profile?.email,
+    firstName: profile?.firstName,
+    lastName: profile?.lastName
+  };
+}
+
 }

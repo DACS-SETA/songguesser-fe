@@ -38,7 +38,6 @@ export class BaseApiService {
     const timeoutValue = customTimeout || HTTP_TIMEOUTS.DEFAULT;
 
     return this.http.get<T>(url, {
-      headers: this.defaultHeaders,
       params: httpParams
     }).pipe(
       timeout(timeoutValue),
@@ -55,7 +54,6 @@ export class BaseApiService {
     const timeoutValue = customTimeout || HTTP_TIMEOUTS.DEFAULT;
 
     return this.http.post<T>(url, data, {
-      headers: this.defaultHeaders
     }).pipe(
       timeout(timeoutValue),
       catchError(this.handleError.bind(this))
@@ -70,7 +68,6 @@ export class BaseApiService {
     const timeoutValue = customTimeout || HTTP_TIMEOUTS.DEFAULT;
 
     return this.http.put<T>(url, data, {
-      headers: this.defaultHeaders
     }).pipe(
       timeout(timeoutValue),
       catchError(this.handleError.bind(this))
@@ -85,7 +82,6 @@ export class BaseApiService {
     const timeoutValue = customTimeout || HTTP_TIMEOUTS.DEFAULT;
 
     return this.http.delete<T>(url, {
-      headers: this.defaultHeaders
     }).pipe(
       timeout(timeoutValue),
       catchError(this.handleError.bind(this))
@@ -100,7 +96,6 @@ export class BaseApiService {
     const timeoutValue = customTimeout || HTTP_TIMEOUTS.DEFAULT;
 
     return this.http.patch<T>(url, data, {
-      headers: this.defaultHeaders
     }).pipe(
       timeout(timeoutValue),
       catchError(this.handleError.bind(this))

@@ -1,43 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { KeycloakService } from '../services/keycloak.service';
+import { mergeMap } from 'rxjs/operators';
 
-/**
- * Interceptor para añadir token de autenticación a las peticiones
- */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+
   constructor(private keycloakService: KeycloakService) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Obtener el token actual de Keycloak
-    const token = this.keycloakService.getToken();
+ intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  return from(this.keycloakService.getToken()).pipe(
+    mergeMap(token => {
+      console.log('🛰️ [AuthInterceptor] Token recibido:', token ? token.substring(0, 25) + '...' : '❌ sin token');
+      console.log('📡 [AuthInterceptor] URL destino:', req.url);
 
-    // Si hay token y la petición no es para assets, añadir el header de autorización
-    if (token && !this.isAssetRequest(request.url)) {
-      const authRequest = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return next.handle(authRequest);
-    }
+      if (token && !this.isAssetRequest(req.url)) {
+        const authReq = req.clone({
+          setHeaders: { Authorization: `Bearer ${token}` }
+        });
+        return next.handle(authReq);
+      }
 
-    return next.handle(request);
-  }
+      console.warn('⚠️ [AuthInterceptor] Request sin token:', req.url);
+      return next.handle(req);
+    })
+  );
+}
 
-  /**
-   * Verifica si la petición es para un asset estático
-   */
+
   private isAssetRequest(url: string): boolean {
-    return url.includes('/assets/') || 
-           url.includes('.json') || 
-           url.includes('.css') || 
-           url.includes('.js') ||
-           url.includes('.ico') ||
-           url.includes('.png') ||
-           url.includes('.jpg') ||
-           url.includes('.svg');
+    return (
+      url.includes('/assets/') ||
+      url.endsWith('.json') ||
+      url.endsWith('.css') ||
+      url.endsWith('.js') ||
+      url.endsWith('.ico')
+    );
   }
 }

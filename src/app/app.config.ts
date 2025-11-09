@@ -1,22 +1,21 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { KeycloakService } from 'keycloak-angular';
 import { keycloakInitOptions } from './core/config/keycloak.config';
 
 import { routes } from './app.routes';
+import { INTERCEPTOR_CONFIG } from './core';
 
 function initializeKeycloak(keycloak: KeycloakService) {
-  return () => {
-    console.log('Inicializando Keycloak...');
-    return keycloak.init(keycloakInitOptions).catch((error) => {
-      console.error('Error en Keycloak:', error);
-      // Si hay problemas de CSP, continuar sin Keycloak
-      console.warn('Continuando sin Keycloak por problemas de configuración');
-      return Promise.resolve();
-    });
+  return async () => {
+    console.log('🔄 Inicializando Keycloak...');
+    const authenticated = await keycloak.init(keycloakInitOptions);
+    console.log('✅ Keycloak listo:', authenticated);
+    console.log('🔑 Token:', await keycloak.getToken());
   };
 }
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +29,10 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService]
-    }
+    },
+     provideHttpClient(withInterceptorsFromDi()), 
+    ...INTERCEPTOR_CONFIG,
+
   ]
 };
+

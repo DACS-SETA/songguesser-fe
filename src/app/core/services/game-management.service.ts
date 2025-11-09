@@ -24,8 +24,8 @@ export class GameManagementService extends BaseApiService {
   // Start a game via BFF
   // POST bff/games/start (BaseApiService construye la URL completa)
   startGame(): Observable<RoundState> {
-    return this.post<RoundState>('games/start', {});
-  }
+  return this.post<RoundState>('games/start', {});
+}
 
   // Submit a guess for the current round
   // POST bff/games/{gameId}/round  { guess, time }
