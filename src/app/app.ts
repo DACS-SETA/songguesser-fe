@@ -20,13 +20,9 @@ export class App implements OnInit {
 
   async ngOnInit() {
     if (this.keycloakService.isLoggedIn()) {
-      await this.keycloakService.refreshUserProfile();
-
-      const synced = localStorage.getItem('userSynced');
-      if (!synced) {
-        await this.userService.syncUser();
-        localStorage.setItem('userSynced', 'true');
-      }
+      await this.keycloakService.refreshUserProfile();   
+      await this.userService.syncUser();
+      
     }
   }
 }

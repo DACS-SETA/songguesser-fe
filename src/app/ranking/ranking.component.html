@@ -1,0 +1,36 @@
+<!-- Navegación superior (idéntica a Home) -->
+<nav class="top-nav">
+  <div class="nav-logo">
+    SongGuesser
+  </div>
+  <div class="nav-links">
+    <a routerLink="/home" class="nav-link">Jugar</a>
+    <a routerLink="/ranking" class="nav-link">Ranking</a>
+    <a href="#" class="nav-link">Perfil</a>
+    <a href="#" class="nav-link">Ayuda</a>
+  </div>
+</nav>
+
+<div class="ranking-container">
+  <h2>Ranking Global</h2>
+
+  <table class="ranking-table">
+    <thead>
+      <tr>
+        <th>Posición</th>
+        <th>Usuario</th>
+        <th>Email</th>
+        <th>Puntaje Total</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let user of ranking; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.totalScore }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
