@@ -239,13 +239,13 @@ export class GameComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      this.gameManagementService.getGameSummary(this.currentGameId).subscribe({
+      this.gameManagementService.finishGame(this.currentGameId).subscribe({
         next: (summary: GameSummary) => {
           this.showOutcomeModal = false;
           this.showSummary(summary);
         },
         error: (err) => {
-          console.error('Error al obtener resumen:', err);
+          console.error('Error al finalizar partida:', err);
         }
       });
     }

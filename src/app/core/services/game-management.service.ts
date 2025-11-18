@@ -51,6 +51,12 @@ export class GameManagementService extends BaseApiService {
     return this.get<GameSummary>(`games/${encodeURIComponent(gameId)}/summary`);
   }
 
+    // Finish a game
+    // POST bff/games/{gameId}/finish
+    finishGame(gameId: string): Observable<GameSummary> {
+      return this.post<GameSummary>(`games/${encodeURIComponent(gameId)}/finish`, {});
+    }
+
   // Local state helpers
   setLocalGameState(game: Game | null): void {
     this.gameState$.next(game);
