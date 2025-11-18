@@ -20,6 +20,10 @@ export const routes: Routes = [
     loadComponent: () => import('./ranking/ranking.component')
       .then(m => m.RankingComponent)
   },
+  {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile').then(m => m.Profile)
+  },
   { 
     path: '**',
     redirectTo: '/home'

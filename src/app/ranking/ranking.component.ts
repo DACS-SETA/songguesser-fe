@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RankingService } from '../core/services/ranking.service';
 import { UserRanking } from '../core/models/UserRanking';
 import { RouterModule } from '@angular/router';
+import { KeycloakService } from '../core/services/keycloak.service';
 
 @Component({
   selector: 'app-ranking',
@@ -15,7 +16,7 @@ export class RankingComponent implements OnInit {
 
   ranking: UserRanking[] = [];
 
-  constructor(private rankingService: RankingService) {}
+  constructor(private rankingService: RankingService, private keycloakService: KeycloakService) {}
 
  ngOnInit(): void {
   this.rankingService.getRanking().subscribe({
@@ -28,4 +29,8 @@ export class RankingComponent implements OnInit {
     }
   });
 }
+
+  logout(): void {
+    this.keycloakService.logout();
+  }
 }

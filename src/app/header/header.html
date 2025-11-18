@@ -76,10 +76,10 @@
           <div class="menu-divider"></div>
 
           <div class="menu-actions">
-            <button (click)="goToAccount()" class="menu-action">
+            <a routerLink="/profile" routerLinkActive="active" class="menu-action">
               <span class="action-icon">👤</span>
-              Mi Cuenta
-            </button>
+              Perfil
+            </a>
             <button (click)="logout()" class="menu-action logout">
               <span class="action-icon">🚪</span>
               Cerrar Sesión

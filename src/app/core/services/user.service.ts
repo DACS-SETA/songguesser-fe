@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { KeycloakService } from './keycloak.service';
+import { UserProfile } from '../models/user-profile';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -36,5 +38,13 @@ console.log(user)
     }
   
 }
+
+  getUserProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.baseUrl}/profile`);
+  }
+
+  updateProfile(data: { username: string; avatarUrl: string }): Observable<any> {
+    return this.http.put(`${this.baseUrl}/profile`, data);
+  }
 
 }

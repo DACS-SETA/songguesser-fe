@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { KeycloakService } from '../core/services/keycloak.service';
@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userProfile: KeycloakProfile | null = null;
   showUserMenu = false;
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(private keycloakService: KeycloakService, private router: Router) {}
 
   ngOnInit(): void {
     this.checkLoginStatus();
@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.keycloakService.hasRole(role);
   }
 
-  goToAccount(): void {
-    window.open(this.keycloakService.getAccountUrl(), '_blank');
+  goToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 }

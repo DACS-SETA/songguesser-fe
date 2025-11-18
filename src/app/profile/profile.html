@@ -1,0 +1,64 @@
+<nav class="top-nav">
+  <div class="nav-logo">SongGuesser</div>
+  <div class="nav-links">
+    <a routerLink="/home" class="nav-link" routerLinkActive="active">Jugar</a>
+    <a routerLink="/ranking" class="nav-link" routerLinkActive="active">Ranking</a>
+    <a routerLink="/profile" class="nav-link" routerLinkActive="active">Perfil</a>
+    <a href="#" class="nav-link">Ayuda</a>
+  </div>
+  <button (click)="logout()" class="logout-button">Cerrar Sesión</button>
+</nav>
+
+<div class="profile-container">
+  <!-- Banner gris superior -->
+  <div class="banner"></div>
+
+  <!-- Avatar superpuesto -->
+  <div class="avatar-container">
+    <img [src]="userProfile?.avatarUrl || ('https://ui-avatars.com/api/?name=' + userProfile?.username + '&background=random&size=200')" alt="Avatar" class="avatar">
+  </div>
+
+  <!-- Nombre de usuario -->
+  <h1 class="username">{{ userProfile?.username || 'Usuario' }}</h1>
+
+  <!-- Estadísticas -->
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-value">{{ userProfile?.totalScore || 0 }}</div>
+      <div class="stat-label">Puntos</div>
+    </div>
+    <div class="divider"></div>
+    <div class="stat-item">
+      <div class="stat-value">{{ userProfile?.gamesPlayed || 0 }}</div>
+      <div class="stat-label">Partidas</div>
+    </div>
+  </div>
+
+  <!-- Botón Configuración -->
+  <button class="btn-config" (click)="openSettings()">Configuración</button>
+</div>
+
+<!-- Diálogo de configuración -->
+<dialog #settingsDialog class="settings-dialog">
+  <h2>Editar Perfil</h2>
+  <form>
+    <div class="form-group">
+      <label for="username">Nombre de usuario:</label>
+      <input type="text" id="username" [(ngModel)]="editData.username" name="username" required>
+    </div>
+    <div class="form-group">
+      <label for="avatar">Avatar:</label>
+      <input type="file" id="avatar" (change)="onFileSelected($event)" accept="image/*">
+      <div *ngIf="editData.avatarUrl" class="preview">
+        <img [src]="editData.avatarUrl" alt="Vista previa" class="preview-img">
+      </div>
+    </div>
+  </form>
+  <div class="dialog-buttons">
+    <button class="cancel-btn" (click)="closeSettings()">Cancelar</button>
+    <button class="save-btn" (click)="saveProfile()">Guardar Cambios</button>
+  </div>
+</dialog>
+
+<!-- Notificación Toast -->
+<div class="toast-notification" [class.show]="showToast">Perfil actualizado con éxito</div>
