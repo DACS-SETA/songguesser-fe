@@ -32,6 +32,16 @@
     <div class="hero-section">
       <h1 class="title">SongGuesser</h1>
       <p class="subtitle">Adivina la Canción</p>
+      <div class="language-selector-container">
+        <label for="language-select" class="language-label">Modo de Juego</label>
+        <div class="select-wrapper">
+          <select id="language-select" [(ngModel)]="selectedLanguage" class="custom-select">
+            <option value="mixed">🌍 Mixto (Todos)</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="en">🇬🇧 Inglés</option>
+          </select>
+        </div>
+      </div>
       <button class="new-game-button" (click)="startNewGame()">Nueva Partida</button>
     </div>
   </div>

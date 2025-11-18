@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -8,14 +9,14 @@ import { KeycloakService } from '../core/services/keycloak.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
   isLoggedIn = false;
+  selectedLanguage: string = 'mixed';
 
   constructor(
     public keycloakService: KeycloakService,
@@ -53,7 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   startNewGame(): void {
-    // Navegar a la página del juego
-    this.router.navigate(['/game']);
+    // Navegar a la página del juego con idioma
+    this.router.navigate(['/game'], { queryParams: { lang: this.selectedLanguage } });
   }
 }

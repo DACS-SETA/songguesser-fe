@@ -1,3 +1,73 @@
+/* Contenedor del selector */
+.language-selector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 2.5rem; /* Más espacio antes del botón jugar */
+  animation: fadeIn 1s ease 0.4s both;
+}
+
+.language-label {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 250px;
+}
+
+/* Estilo del Select personalizado */
+.custom-select {
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background-color: var(--white);
+  border: 2px solid var(--light-bg);
+  border-radius: 12px;
+  appearance: none; /* Quita la flecha por defecto del navegador */
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+/* Flecha personalizada usando SVG en background */
+.select-wrapper::after {
+  content: '▼';
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Para que el click pase al select */
+  transition: transform 0.3s ease;
+}
+
+/* Estados Hover y Focus */
+.custom-select:hover {
+  border-color: #bdc3c7;
+  transform: translateY(-1px);
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+}
+
+/* Animación de la flecha al abrir (opcional/simulado) */
+.select-wrapper:hover::after {
+  color: var(--primary-color);
+}
 /* Variables de colores */
 :host {
   --primary-color: #2c3e50;

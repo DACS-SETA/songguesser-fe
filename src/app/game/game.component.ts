@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -63,9 +64,21 @@ export class GameComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
 
-  constructor(private songService: SongService, private gameManagementService: GameManagementService, private router: Router) {}
+  gameLanguage: string = 'mixed';
+
+  constructor(
+    private songService: SongService,
+    private gameManagementService: GameManagementService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    // Leer parámetro de idioma de la ruta
+    this.route.queryParams.subscribe(params => {
+      this.gameLanguage = params['lang'] || 'mixed';
+    });
+
     // Suscribirse al flujo del buscador
     this.searchTerms.pipe(
       debounceTime(300),
@@ -99,7 +112,7 @@ export class GameComponent implements OnInit, OnDestroy {
   startGame(): void {
     this.resetGame();
     this.isGameActive = true;
-    this.gameManagementService.startGame().subscribe({
+    this.gameManagementService.startGame(this.gameLanguage).subscribe({
       next: (response: RoundState) => {
         this.currentGameId = response.gameId;
         this.songUrl = response.song.previewUrl;
@@ -265,7 +278,7 @@ export class GameComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.gameManagementService.nextRound(this.currentGameId!).subscribe({
+    this.gameManagementService.nextRound(this.currentGameId!, this.gameLanguage).subscribe({
       next: (response: RoundState) => {
         // Update UI/state with the new round data
         this.songUrl = response.song.previewUrl;

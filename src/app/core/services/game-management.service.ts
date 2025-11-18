@@ -23,9 +23,9 @@ export class GameManagementService extends BaseApiService {
 
   // Start a game via BFF
   // POST bff/games/start (BaseApiService construye la URL completa)
-  startGame(): Observable<RoundState> {
-  return this.post<RoundState>('games/start', {});
-}
+  startGame(language: string): Observable<RoundState> {
+    return this.post<RoundState>(`games/start?language=${language}`, {});
+  }
 
   // Submit a guess for the current round
   // POST bff/games/{gameId}/round  { guess, time }
@@ -35,8 +35,8 @@ export class GameManagementService extends BaseApiService {
 
   // Advance to the next round
   // POST bff/games/{gameId}/round with null body
-  nextRound(gameId: string): Observable<RoundState> {
-    return this.post<RoundState>(`games/${encodeURIComponent(gameId)}/round`, null);
+  nextRound(gameId: string, language: string): Observable<RoundState> {
+    return this.post<RoundState>(`games/${encodeURIComponent(gameId)}/round?language=${language}`, null);
   }
 
   // Surrender a game
