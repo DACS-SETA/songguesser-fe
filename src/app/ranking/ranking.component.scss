@@ -1,58 +1,71 @@
 /* ---------- Container general ---------- */
+
 .ranking-container {
-  max-width: 80%;
-  margin: 80px auto;
-  padding: 20px;
-  text-align: center;
-  backdrop-filter: blur(8px);
-  color: #fff;
-  animation: fadeIn 0.6s ease-out;
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
 /* ---------- Título ---------- */
-.ranking-container h2 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 25px;
-  background: linear-gradient(90deg, #0069f3, #0077ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.ranking-title {
+  text-align: center;
+  font-size: 2.7rem;
+  font-weight: 700;
+  color: #222;
+  margin: 32px 0 24px 0;
+  letter-spacing: 0.5px;
 }
 
 /* ---------- Tabla ---------- */
+.ranking-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 24px 32px;
+}
+
 .ranking-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 12px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 5px 5px 0 0;
   overflow: hidden;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 0 20px rgba(0, 153, 255, 0.2);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
 /* ---------- Encabezado ---------- */
+
 .ranking-table thead {
-  background: rgba(255,255,255,0.07);
+  background: #b0b0b0;
 }
 
 .ranking-table th {
-  padding: 14px 10px;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #2f3330;
+  padding: 1.5rem 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #222;
+  border: none;
+  text-align: center;
 }
 
 /* ---------- Filas ---------- */
+
 .ranking-table tbody tr {
+  background: #fff;
   transition: 0.2s ease;
 }
 
 .ranking-table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 1.1rem 0.5rem;
   font-size: 1rem;
+  color: #222;
+  text-align: center;
+  border-bottom: 1px solid #eaeaea;
 }
 
 /* ---------- Hover ---------- */
@@ -62,23 +75,6 @@
 }
 
 /* ---------- Podio ---------- */
-.ranking-table tbody tr:nth-child(1) td {
-  font-weight: bold;
-  color: rgb(221, 188, 1);
-  text-shadow: 0 0 8px rgba(255,215,0,0.5);
-}
-
-.ranking-table tbody tr:nth-child(2) td {
-  font-weight: bold;
-  color: rgb(65, 64, 64);
-  text-shadow: 0 0 8px rgba(192,192,192,0.5);
-}
-
-.ranking-table tbody tr:nth-child(3) td {
-  font-weight: bold;
-  color: #cd7f32;
-  text-shadow: 0 0 8px rgba(205,127,50,0.5);
-}
 
 /* ---------- Animación fade-in ---------- */
 @keyframes fadeIn {

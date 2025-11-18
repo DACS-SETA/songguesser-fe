@@ -10,26 +10,27 @@
   <button (click)="logout()" class="logout-button">Cerrar Sesión</button>
 </nav>
 
+
 <div class="ranking-container">
-  <h2>Ranking Global</h2>
-
-  <table class="ranking-table">
-    <thead>
-      <tr>
-        <th>Posición</th>
-        <th>Usuario</th>
-        <th>Email</th>
-        <th>Puntaje Total</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let user of ranking; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.totalScore }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <h2 class="ranking-title">Ranking</h2>
+  <div class="ranking-card">
+    <table class="ranking-table">
+      <thead>
+        <tr>
+          <th>Ranking</th>
+          <th>Jugador</th>
+          <th>Partidas Jugadas</th>
+          <th>Puntaje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of ranking; let i = index">
+          <td>#{{ i + 1 }}</td>
+          <td><strong>{{ user.username }}</strong></td>
+          <td>{{ user.gamesPlayed }}</td>
+          <td>{{ user.totalScore }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
