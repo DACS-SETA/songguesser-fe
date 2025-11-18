@@ -1,0 +1,73 @@
+
+<nav class="top-nav">
+  <div class="nav-logo">
+    SongGuesser
+  </div>
+  <div class="nav-links">
+    <a routerLink="/home" class="nav-link">Jugar</a>
+    <a routerLink="/ranking" class="nav-link">Ranking</a>
+    <a routerLink="/profile" class="nav-link">Perfil</a>
+    <a routerLink="/help" class="nav-link active">Ayuda</a>
+  </div>
+  <button *ngIf="isLoggedIn()" (click)="logout()" class="logout-button">Cerrar Sesión</button>
+</nav>
+
+<div class="help-container">
+  <aside class="help-sidebar">
+    <button (click)="setActiveSection('description')" [class.active]="activeSection === 'description'">¿Qué es SongGuesser?</button>
+    <button (click)="setActiveSection('dynamics')" [class.active]="activeSection === 'dynamics'">Dinámica de Juego</button>
+    <button (click)="setActiveSection('scoring')" [class.active]="activeSection === 'scoring'">Puntuación</button>
+    <button (click)="setActiveSection('gameplay')" [class.active]="activeSection === 'gameplay'">Cómo Jugar</button>
+    <button (click)="setActiveSection('profile')" [class.active]="activeSection === 'profile'">Perfil</button>
+  </aside>
+  <div class="help-content">
+    <div *ngIf="activeSection === 'description'">
+      <h1 class="help-title">Guía de Ayuda - SongGuesser</h1>
+      <p class="app-description">
+        SongGuesser pone a prueba tu conocimiento musical: tenés que adivinar la canción escuchando solo un fragmento. ¡Acumulá puntos por tu velocidad y agilidad musical!
+      </p>
+    </div>
+    <div *ngIf="activeSection === 'dynamics'">
+      <section class="section-block">
+        <h2 class="section-title">🎤 Dinámica de Juego</h2>
+        <ul class="rules-list">
+          <li>Cada partida se desarrolla en <strong>rondas sucesivas</strong>, cada una con una canción diferente.</li>
+          <li>En cada ronda, se reproduce un fragmento de <strong>30 segundos</strong> de una canción al azar.</li>
+          <li>Podés arriesgar una respuesta en cualquier momento.</li>
+          <li>La partida termina si se te acaba el tiempo en una ronda sin haber acertado, o si decidís <strong>rendirte</strong>.</li>
+        </ul>
+      </section>
+    </div>
+    <div *ngIf="activeSection === 'scoring'">
+      <section class="section-block">
+        <h2 class="section-title">⭐ Puntuación</h2>
+        <ul class="rules-list">
+          <li><strong>Acierto:</strong> Si acertás, ganás puntos. La cantidad depende de <strong>qué tan rápido lo hiciste</strong>. ¡Actuar con rapidez es clave!</li>
+          <li><strong>Fallo:</strong> Si errás, podés seguir intentando hasta que se acabe el tiempo de 30 segundos.</li>
+          <li>Al final de cada ronda se revela la <strong>información musical</strong> completa de la canción.</li>
+        </ul>
+      </section>
+    </div>
+    <div *ngIf="activeSection === 'gameplay'">
+      <section class="section-block">
+        <h2 class="section-title">🕹️ Cómo Empezar a Jugar</h2>
+        <ol class="steps-list">
+          <li>En la pantalla de inicio, hacé clic en <strong>"Nueva Partida"</strong>.</li>
+          <li>El sistema te llevará a la pantalla de juego con una cuenta regresiva de 3 segundos.</li>
+          <li>Cuando el audio comience, ingresá el posible <strong>título de la canción</strong> en el campo. El sistema te proporcionará <strong>sugerencias de búsqueda</strong>.</li>
+          <li>Hacé clic en <strong>"Enviar Respuesta"</strong>.</li>
+          <li>Si acertás, hacé clic en <strong>"Siguiente Ronda"</strong> para continuar sumando puntos. Si te rendís o el tiempo se agota sin acertar, la partida finaliza.</li>
+        </ol>
+      </section>
+    </div>
+    <div *ngIf="activeSection === 'profile'">
+      <section class="section-block">
+        <h2 class="section-title">👤 Perfil</h2>
+        <ul class="rules-list">
+          <li>Para modificar tus datos personales (nombre o foto) hacé clic en <strong>"Perfil"</strong> y luego en "Configurar".</li>
+          <li>Podés ir al Ranking para comparar tu desempeño con otros jugadores.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>

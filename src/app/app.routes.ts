@@ -24,6 +24,10 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./profile/profile').then(m => m.Profile)
   },
+    {
+      path: 'help',
+      loadComponent: () => import('./help/help.component').then(m => m.HelpComponent)
+    },
   { 
     path: '**',
     redirectTo: '/home'
