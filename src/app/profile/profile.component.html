@@ -1,0 +1,31 @@
+<div class="profile-wrapper" *ngIf="user">
+
+  <!-- Imagen de perfil -->
+  <div class="profile-photo">
+    <div class="avatar-fallback">
+      {{ user.firstName?.[0] }}{{ user.lastName?.[0] }}
+    </div>
+  </div>
+
+  <!-- Datos -->
+  <h1 class="profile-name">
+    {{ user.firstName }} {{ user.lastName }}
+  </h1>
+
+  <p class="profile-username">@{{ user.username }}</p>
+
+  <div class="profile-info">
+
+    <div class="info-row">
+      <span class="label">Email</span>
+      <span class="value">{{ user.email }}</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Account Source</span>
+      <span class="value">Keycloak</span>
+    </div>
+
+  </div>
+
+</div>

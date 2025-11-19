@@ -1,8 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './header/header';
+// import { HeaderComponent } from './header/header';
 import { KeycloakService } from './core/services/keycloak.service';
 import { UserService } from './core/services/user.service';
+import {HeaderComponent} from './custom-header/header.component'
 
 @Component({
   selector: 'app-root',

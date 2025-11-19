@@ -1,0 +1,101 @@
+<div class="help-container">
+  <h1 class="help-title">Guía del Juego</h1>
+  <p class="help-subtitle">Todo lo que necesitás saber para jugar SongGuesser</p>
+
+  <!-- Sección: ¿Qué es SongGuesser? -->
+  <section class="help-section">
+    <h2>¿Qué es SongGuesser?</h2>
+    <p>
+      SongGuesser es un juego musical donde debés adivinar canciones a partir de fragmentos
+      de audio. Cada partida se juega por rondas, y tu objetivo es sumar todos los puntos
+      posibles antes de fallar.
+    </p>
+  </section>
+
+  <!-- Sección: Cómo se juega -->
+  <section class="help-section">
+    <h2>Cómo se juega</h2>
+
+    <ul>
+      <li>El juego comienza generando una <strong>canción aleatoria</strong>.</li>
+      <li>Escuchás hasta <strong>30 segundos</strong> del fragmento (previsto por iTunes API).</li>
+      <li>Podés responder en cualquier momento escribiendo el nombre de la canción.</li>
+      <li>Si acertás rápido, ganás más puntos.</li>
+      <li>Si fallás o se acaba el tiempo, se termina la partida.</li>
+      <li>Podés rendirte en cualquier momento.</li>
+    </ul>
+
+    <div class="image-box">
+      <img src="assets/help/round.png" alt="Ejemplo pantalla de juego">
+      <p class="img-caption">Pantalla de juego: fragmento, input y tiempo restante.</p>
+    </div>
+  </section>
+
+  <!-- Sección: Puntuación -->
+  <section class="help-section">
+    <h2>Sistema de puntuación</h2>
+    <p>
+      Los puntos dependen del <strong>tiempo en el que acertás</strong> la canción.
+      Cuanto más rápido respondas, mayor será tu recompensa.
+    </p>
+
+    <ul>
+      <li>Acierto instantáneo → muchos puntos.</li>
+      <li>Acierto cerca del final → pocos puntos.</li>
+      <li>Fallo → fin de partida.</li>
+    </ul>
+
+    <div class="image-box">
+      <img src="assets/help/round-correct.png" alt="Resultado de ronda">
+      <p class="img-caption">Ejemplo del resultado de una ronda.</p>
+    </div>
+  </section>
+
+  <!-- Sección: Final de la partida -->
+  <section class="help-section">
+    <h2>Final de la partida</h2>
+    <p>La partida termina cuando:</p>
+
+    <ul>
+      <li>Respondés mal.</li>
+      <li>Se acaba el tiempo sin acertar.</li>
+      <li>Te rendís.</li>
+    </ul>
+
+    <p>
+      Al finalizar verás un <strong>resumen con tu puntaje total</strong> y cuántas canciones acertaste.
+    </p>
+
+    <div class="image-box">
+      <img src="assets/help/summary.png" alt="Resumen de partida">
+      <p class="img-caption">Resumen de fin de partida.</p>
+    </div>
+  </section>
+
+  <!-- Sección: Ranking -->
+  <section class="help-section">
+    <h2>Ranking Global</h2>
+    <p>
+      Todos los jugadores compiten por ver quién tiene el <strong>mayor puntaje acumulado</strong>.
+      Tu mejor partida se suma al total de puntos en tu perfil.
+    </p>
+    <div class="image-box">
+      <img src="assets/help/ranking.png" alt="Ranking global">
+      <p class="img-caption">Vista del ranking global.</p>
+    </div>
+  </section>
+
+  <!-- Sección: Consejos -->
+  <section class="help-section">
+    <h2>Consejos para ganar</h2>
+    <ul>
+      <li>Prestá atención a la intro: suele ser el mejor indicador.</li>
+      <li>Intentá responder antes de los 10 segundos.</li>
+      <li>No esperes a que termine el fragmento: ¡arriesgá!</li>
+    </ul>
+  </section>
+
+  <footer class="help-footer">
+    <p>SongGuesser © 2025 — Proyecto DACS</p>
+  </footer>
+</div>

@@ -1,17 +1,5 @@
 <div class="game-container">
-  <!-- Navegación superior (igual al home) -->
-  <nav class="top-nav" *ngIf="isGameActive">
-    <div class="nav-logo">
-      SongGuesser
-    </div>
-    <div class="nav-links">
-      <a routerLink="/game" class="nav-link">Jugar</a>
-      <a routerLink="/ranking" class="nav-link">Ranking</a>
-      <a href="#" class="nav-link">Perfil</a>
-      <a href="#" class="nav-link">Ayuda</a>
-    </div>
-    <button (click)="goToHome()" class="logout-button">Cerrar Sesión</button>
-  </nav>
+
 
   <!-- Cuenta regresiva -->
   <div *ngIf="showCountdown" class="countdown-screen">

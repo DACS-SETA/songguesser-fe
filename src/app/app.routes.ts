@@ -3,13 +3,16 @@ import { RoleAGuard } from './core/guards/role.guard';
 import { RoleBGuard } from './core/guards/role.guard';
 import { GameComponent } from './game/game.component';
 import { RankingComponent } from './ranking/ranking.component';
+import { HomeComponent } from './home/home';
+import { HelpComponent } from './help/help.component';
+import { ProfileComponent } from './profile/profile.component';
 
 export const routes: Routes = [
 
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { 
     path: 'home',
-    loadComponent: () => import('./home/home').then(m => m.HomeComponent)
+   component: HomeComponent
   },
   { 
     path: 'game',
@@ -20,6 +23,13 @@ export const routes: Routes = [
     loadComponent: () => import('./ranking/ranking.component')
       .then(m => m.RankingComponent)
   },
+  {
+  path: 'help',
+  component: HelpComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent  },
   { 
     path: '**',
     redirectTo: '/home'
